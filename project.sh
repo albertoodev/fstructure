@@ -3,6 +3,7 @@
 source init.sh
 source error.sh
 source menu.sh
+source feature.sh
 #--------------------------#
 ## main ##
 r=$(pwd)
@@ -10,15 +11,18 @@ r=$(pwd)
 function structer() {
 	while true; do
 		__menu1
-		read -r num
+		read num
 		case $num in
 		1)
 			echo "Init..."
 			__init
-			cd $r || __error
+			cd "$r" || __error
 			;;
 		2)
 			echo "New feature..."
+			printf 'name of the feature'
+    		read -r feature
+			__feature $feature
 			;;
 		q)
 			clear
@@ -37,3 +41,5 @@ function __press_any_key() {
 	read -n 1 -s key
 	clear
 }
+
+structer

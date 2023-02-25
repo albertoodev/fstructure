@@ -1,7 +1,7 @@
 source error.sh
 ## init 
 function __init(){
-	cd $(pwd)/lib  && __init_files || __error
+	cd $r/lib  && __init_files || __error
 }
 
 function __init_files() {
@@ -15,7 +15,7 @@ function __create_structure(){
 }
 
 function __put_content(){
-	FILES_PATH=$(find ~ -name alberto_flutter_project_structure)/files
+	FILES_PATH=$(find ~ -name flutter_project_structure)/files
 	echo $FILES_PATH
 	paths=(app/app errors/failures navigation/navigation theme/theme theme/colors)
 	for path in $paths

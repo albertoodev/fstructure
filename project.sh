@@ -8,7 +8,7 @@ source feature.sh
 ## main ##
 r=$(pwd)
 #--------------------------#
-function structer() {
+function project_structure() {
 	while true; do
 		__menu1
 		read num

@@ -16,12 +16,11 @@ function structer() {
 		1)
 			echo "Init..."
 			__init
-			cd "$r" || __error
 			;;
 		2)
 			echo "New feature..."
 			printf 'name of the feature'
-    		read -r feature
+			read -r feature
 			__feature $feature
 			;;
 		q)
@@ -32,6 +31,7 @@ function structer() {
 			echo "Invalid input"
 			;;
 		esac
+		cd "$r" || __error
 		__press_any_key
 	done
 }
@@ -41,5 +41,3 @@ function __press_any_key() {
 	read -n 1 -s key
 	clear
 }
-
-structer

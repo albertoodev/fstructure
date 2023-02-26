@@ -2,7 +2,7 @@
 #--------------------------#
 ## main ##
 r=$(pwd)
-FILES_PATH=$(find ~ -name flutter_project_structure)/files
+FILES_PATH=$(find ~ -name fstructure)/files
 
 # _init ................................................
 function __init() {
@@ -32,20 +32,16 @@ function __put_content() {
 # _feature ................................................
 
 function __feature() {
-	if [ '$1' -e '' ]; then
-		echo "name of the feature most not be Empty"
+	if [ '$1' -ne '' ]; then
+		cd $r/lib/features && __create_feature_structure $1 || __error
 	else
-		cd $r/lib && __init_feature_files $1 || __error
+		echo "name of the feature most not be Empty"	
 	fi
 }
 
-function __init_feature_files() {
-	__create_feature_structure $1 # && __put_content
-}
-
 function __create_feature_structure() {
-	mkdir features/$1 &&
-		cd features/$1 &&
+	mkdir $1 &&
+		cd $1 &&
 		mkdir domain data presentation &&
 		mkdir data/{data_sources,models,repositories} domain/{entities,repositories,use_cases} presentation/{screens,widgets,providers} ||
 		__error
@@ -63,34 +59,38 @@ function __error() {
 }
 
 # project structure --------------------------#
-function project_structure() {
+function fstructure() {
 	case $1 in
 	'-i')
-		if [ $# -ne 1]; then 
+		if [ "$#" -ne '1' ]; then 
 			__error &&
 			return 1
+		else
+			echo "Init..."
+			__init &&
+			echo 'done'
 		fi
-		echo "Init..."
-		__init &&
-		echo 'done'
 		;;
 	'-f')
-		if [ $# -ne 2]; then 
+		if [ "$#" -ne '2' ]; then 
 			__error &&
 			return 1
+		else
+			echo "New feature..."
+			__feature $2 &&
+			echo 'done'
 		fi
-		echo "New feature..."
-		__feature $2 &&
-		echo 'done'
 		;;
 	'-m')
-		if [ $# -ne 3]; then 
+		if [ "$#" -ne '3' ]; then 
 			__error &&
 			return 1
+		else 
+			echo "Create model..."
+			__create_model $2 $3 &&
+			echo 'done'
 		fi
-		echo "Create model..."
-		__create_model $2 $3 &&
-		echo 'done'
+		
 		;;
 	*)
 		echo "Invalid input"

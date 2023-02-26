@@ -66,16 +66,28 @@ function __error() {
 function project_structure() {
 	case $1 in
 	'-i')
+		if [ $# -ne 1]; then 
+			__error &&
+			return 1
+		fi
 		echo "Init..."
 		__init &&
 		echo 'done'
 		;;
 	'-f')
+		if [ $# -ne 2]; then 
+			__error &&
+			return 1
+		fi
 		echo "New feature..."
 		__feature $2 &&
 		echo 'done'
 		;;
 	'-m')
+		if [ $# -ne 3]; then 
+			__error &&
+			return 1
+		fi
 		echo "Create model..."
 		__create_model $2 $3 &&
 		echo 'done'

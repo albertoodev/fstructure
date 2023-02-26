@@ -32,11 +32,7 @@ function __put_content() {
 # _feature ................................................
 
 function __feature() {
-	if [ '$1' -ne '' ]; then
-		cd $r/lib/features && __create_feature_structure $1 || __error
-	else
-		echo "name of the feature most not be Empty"	
-	fi
+	cd $r/lib/features && __create_feature_structure $1 || __error
 }
 
 function __create_feature_structure() {

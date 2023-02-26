@@ -1,3 +1,0 @@
-class App {
-  App._();
-}

@@ -2,9 +2,20 @@
 #--------------------------#
 ## main ##
 r=$(pwd)
+FILES_PATH=$(find ~ -name flutter_project_structure)/files
+
+# _menus ................................................
+function __select_num_menu() {
+	printf "1) init\n2) new feature\n3) create model\nq) exit\n"
+	echo "Enter your choice : "
+}
+
+function __select_feature_menu() {
+	echo "Select a feature (Write the name) : "
+	echo $(ls $r/lib/features)
+}
 
 # _init ................................................
-
 function __init() {
 	cd $r/lib && __init_files || __error
 }
@@ -18,22 +29,27 @@ function __create_structure() {
 		mkdir core/{app,dependency_injection,errors,navigation,strings,theme} &&
 		touch core/{config,app/app,errors/{exceptions,failures},dependency_injection/injection,navigation/navigation,strings/strings,theme/{colors,theme}}.dart
 }
-function __put__ (){
-	cat $1/$2.dart > core/$2.dart
+function __put__() {
+	cat $1/$2.dart >core/$2.dart
 }
 function __put_content() {
-	FILES_PATH=$(find ~ -name flutter_project_structure)/files
-	__put__ $FILES_PATH	app/app 
-	__put__ $FILES_PATH	errors/failures 
-	__put__ $FILES_PATH	navigation/navigation 
-	__put__ $FILES_PATH	theme/theme 
-	__put__ $FILES_PATH	theme/colors
+	__put__ $FILES_PATH app/app
+	__put__ $FILES_PATH errors/failures
+	__put__ $FILES_PATH navigation/navigation
+	__put__ $FILES_PATH theme/theme
+	__put__ $FILES_PATH theme/colors
 }
 
 # _feature ................................................
 
 function __feature() {
-	cd $r/lib && __init_feature_files $1 || __error
+	echo 'name of the feature : '
+	read -r feature
+	if [ '$feature' -e '' ]; then
+		echo "name of the feature most not be Empty"
+	else
+		cd $r/lib && __init_feature_files $feature || __error
+	fi
 }
 
 function __init_feature_files() {
@@ -47,22 +63,19 @@ function __create_feature_structure() {
 		mkdir data/{data_sources,models,repositories} domain/{entities,repositories,use_cases} presentation/{screens,widgets,providers} ||
 		__error
 }
-# menus ................................................
-
-function __select_num_menu() {
-	printf "1) init\n2) new feature\n3) create model\nq) exit\n"
-	echo "Enter your choice : "
-}
-
-function __select_feature_menu() {
-	echo "Select a feature (Write the name) : "
-	echo $(ls $r/lib/features)
+# _create_model ................................................
+function __create_model() {
+	__select_feature_menu
+	read -r feature
+	echo "Model name"
+	read -r model
+	cd $r/lib/features/$feature
+	touch {domain/entities/,data/models/}$model.dart
 }
 
 # functions ................................................
 function __press_any_key() {
-	echo "Press any key to continue..."
-	read -n 1 -s key
+	read -n1 -r -p "Press any key to continue..."
 	clear
 }
 
@@ -75,7 +88,7 @@ function __error() {
 function project_structure() {
 	while true; do
 		__select_num_menu
-		read -n 1 -s num
+		read -r num
 		clear
 		case $num in
 		1)
@@ -84,19 +97,11 @@ function project_structure() {
 			;;
 		2)
 			echo "New feature..."
-			echo 'name of the feature : '
-			read -r feature
-			if [ $feature -e '']; then
-				echo "name of the feature most not be Empty"
-			else
-				__feature $feature
-			fi
+			__feature
 			;;
 		3)
 			echo "Create model..."
-			__select_feature_menu
-			read feature
-			echo "$feature"
+			__create_model
 			;;
 		q)
 			return 0
@@ -109,4 +114,4 @@ function project_structure() {
 		__press_any_key
 	done
 }
-__put_content
+project_structure

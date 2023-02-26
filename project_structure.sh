@@ -4,17 +4,6 @@
 r=$(pwd)
 FILES_PATH=$(find ~ -name flutter_project_structure)/files
 
-# _menus ................................................
-function __select_num_menu() {
-	printf "1) init\n2) new feature\n3) create model\nq) exit\n"
-	echo "Enter your choice : "
-}
-
-function __select_feature_menu() {
-	echo "Select a feature (Write the name) : "
-	echo $(ls $r/lib/features)
-}
-
 # _init ................................................
 function __init() {
 	cd $r/lib && __init_files || __error
@@ -43,12 +32,10 @@ function __put_content() {
 # _feature ................................................
 
 function __feature() {
-	echo 'name of the feature : '
-	read -r feature
-	if [ '$feature' -e '' ]; then
+	if [ '$1' -e '' ]; then
 		echo "name of the feature most not be Empty"
 	else
-		cd $r/lib && __init_feature_files $feature || __error
+		cd $r/lib && __init_feature_files $1 || __error
 	fi
 }
 
@@ -65,20 +52,11 @@ function __create_feature_structure() {
 }
 # _create_model ................................................
 function __create_model() {
-	__select_feature_menu
-	read -r feature
-	echo "Model name"
-	read -r model
-	cd $r/lib/features/$feature
-	touch {domain/entities/,data/models/}$model.dart
+	cd $r/lib/features/$1
+	touch {domain/entities/,data/models/}$2.dart
 }
 
 # functions ................................................
-function __press_any_key() {
-	read -n1 -r -p "Press any key to continue..."
-	clear
-}
-
 function __error() {
 	printf "something went wrong ... \n"
 	return 1
@@ -86,32 +64,25 @@ function __error() {
 
 # project structure --------------------------#
 function project_structure() {
-	while true; do
-		__select_num_menu
-		read -r num
-		clear
-		case $num in
-		1)
-			echo "Init..."
-			__init
-			;;
-		2)
-			echo "New feature..."
-			__feature
-			;;
-		3)
-			echo "Create model..."
-			__create_model
-			;;
-		q)
-			return 0
-			;;
-		*)
-			echo "Invalid input"
-			;;
-		esac
-		cd "$r" || __error
-		__press_any_key
-	done
+	case $1 in
+	'-i')
+		echo "Init..."
+		__init &&
+		echo 'done'
+		;;
+	'-f')
+		echo "New feature..."
+		__feature $2 &&
+		echo 'done'
+		;;
+	'-m')
+		echo "Create model..."
+		__create_model $2 $3 &&
+		echo 'done'
+		;;
+	*)
+		echo "Invalid input"
+		;;
+	esac
+	cd "$r" || __error
 }
-project_structure

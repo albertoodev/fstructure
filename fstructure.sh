@@ -99,8 +99,69 @@ function fs() {
 		;;
 	'-f')
 		if [ "$#" -ne '2' ]; then
-			__error &&
-				return 1
+			case $3 in
+			'ds')
+				if [ "$#" -ne '4' ]; then
+					__error &&
+						return 1
+				else
+					echo "Create $4 data source in the $2 feature ..."
+					__create_data_source $2 $4 &&
+						echo 'done'
+				fi
+				;;
+			'r')
+				if [ "$#" -ne '4' ]; then
+					__error &&
+						return 1
+				else
+					echo "Create $4 repository in the $2 feature ..."
+					__create_repository $2 $4 &&
+						echo 'done'
+				fi
+				;;
+			'm')
+				if [ "$#" -ne '4' ]; then
+					__error &&
+						return 1
+				else
+					echo "Create $4 model in the $2 feature ..."
+					__create_model $2 $4 &&
+						echo 'done'
+				fi
+				;;
+			'p')
+				if [ "$#" -ne '4' ]; then
+					__error &&
+						return 1
+				else
+					echo "Create $4 provider in the $2 feature ..."
+					__create_provider $2 $4 &&
+						echo 'done'
+				fi
+				;;
+			's')
+				if [ "$#" -ne '4' ]; then
+					case $5 in
+					'w')
+						#create widget
+						;;
+					*)
+						__error &&
+							return 1
+						;;
+					esac
+				else
+					echo "Create $4 screen in the $2 feature ..."
+					__create_screen $2 $4 &&
+						echo 'done'
+				fi
+				;;
+			*)
+				__error &&
+					return 1
+				;;
+			esac
 		else
 			echo "New feature..."
 			__feature $2 &&
@@ -115,76 +176,26 @@ function fs() {
 			echo "$(ls $r/lib/features)"
 		fi
 		;;
-	'-m')
-		if [ "$#" -ne '3' ]; then
-			__error &&
-				return 1
-		else
-			echo "Create model..."
-			__create_model $2 $3 &&
-				echo 'done'
-		fi
-		;;
-	'-r')
-		if [ "$#" -ne '3' ]; then
-			__error &&
-				return 1
-		else
-			echo "Create repository..."
-			__create_repository $2 $3 &&
-				echo 'done'
-		fi
-		;;
-	'-d')
-		if [ "$#" -ne '3' ]; then
-			__error &&
-				return 1
-		else
-			echo "Create Data Source ..."
-			__create_data_source $2 $3 &&
-				echo 'done'
-		fi
-		;;
-	'-p')
-		if [ "$#" -ne '3' ]; then
-			__error &&
-				return 1
-		else
-			echo "Create Provider ..."
-			__create_provider $2 $3 &&
-				echo 'done'
-		fi
-		;;
-	'-s')
-		if [ "$#" -ne '3' ]; then
-			__error &&
-				return 1
-		else
-			echo "Create Screen ..."
-			__create_screen $2 $3 &&
-				echo 'done'
-		fi
-		;;
 	'-fs')
 		if [ "$#" -ne '2' ]; then
 			case $3 in
 			'w')
-			#create widget
-			;;
+				#create widget
+				;;
 			'p')
-			#create provider
-			;;
+				#create provider
+				;;
 			*)
 				__error &&
-				return 1
-			;; 
+					return 1
+				;;
 			esac
 		else
 			echo "Create Feature Screen ..."
 			__create_feature_screen $2 &&
 				echo 'done'
 		fi
-	;;
+		;;
 	*)
 		echo "Invalid input"
 		;;

@@ -16,7 +16,7 @@ source fstructure.sh
 To use the script, use the following command in your terminal:
 
 ```sh
-fstructure [OPTION] [PARAMETER]...
+fs [OPTION] [PARAMETER]...
 ```
 
 ## Purpose

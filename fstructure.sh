@@ -63,13 +63,20 @@ function __create_data_source() {
 # _create_provider ..........................................
 function __create_provider() {
 	cd $r/lib/features/$1
-	touch presentation/presentation/providers/$2_provider.dart
+	touch presentation/providers/$2_provider.dart
 }
 # _create_screen ..........................................
 function __create_screen() {
 	cd $r/lib/features/$1/presentation/screens/
 	mkdir $2 && mkdir $2/widgets
 	touch $2/$2.dart
+}
+
+# _create_feature_screen ..........................................
+function __create_feature_screen() {
+	cd $r/lib/features/
+	mkdir $1 && mkdir $1/{widgets,providers}
+	touch $1/$1.dart
 }
 # functions ................................................
 function __error() {
@@ -158,7 +165,26 @@ function fs() {
 				echo 'done'
 		fi
 		;;
-	
+	'-fs')
+		if [ "$#" -ne '2' ]; then
+			case $3 in
+			'w')
+			#create widget
+			;;
+			'p')
+			#create provider
+			;;
+			*)
+				__error &&
+				return 1
+			;; 
+			esac
+		else
+			echo "Create Feature Screen ..."
+			__create_feature_screen $2 &&
+				echo 'done'
+		fi
+	;;
 	*)
 		echo "Invalid input"
 		;;

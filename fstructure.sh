@@ -40,7 +40,7 @@ function __create_feature_structure() {
 	mkdir $1 &&
 		cd $1 &&
 		mkdir domain data presentation &&
-		mkdir data/{data_sources,models,repositories} domain/{entities,repositories} presentation/{screens,widgets,providers} ||
+		mkdir data/{data_sources,models,repositories} domain/{entities,repositories} presentation/{screens,providers} ||
 		__error
 }
 # _create_model ................................................
@@ -63,7 +63,13 @@ function __create_data_source() {
 # _create_provider ..........................................
 function __create_provider() {
 	cd $r/lib/features/$1
-	touch presentation/presentation/$2_provider.dart
+	touch presentation/presentation/providers/$2_provider.dart
+}
+# _create_screen ..........................................
+function __create_screen() {
+	cd $r/lib/features/$1/presentation/screens/
+	mkdir $2 && mkdir $2/widgets
+	touch $2/$2.dart
 }
 # functions ................................................
 function __error() {
@@ -137,11 +143,22 @@ function fs() {
 			__error &&
 				return 1
 		else
-			echo "Create Data Source ..."
+			echo "Create Provider ..."
 			__create_provider $2 $3 &&
 				echo 'done'
 		fi
 		;;
+	'-s')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create Screen ..."
+			__create_screen $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	
 	*)
 		echo "Invalid input"
 		;;

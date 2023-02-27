@@ -65,6 +65,11 @@ function __create_provider() {
 	cd $r/lib/features/$1
 	touch presentation/providers/$2_provider.dart
 }
+# _create_widget ..........................................
+function __create_widget() {
+	cd $r/lib/features/$1
+	touch presentation/screens/$2/widgets/$3_widget.dart
+}
 # _create_screen ..........................................
 function __create_screen() {
 	cd $r/lib/features/$1/presentation/screens/
@@ -144,7 +149,14 @@ function fs() {
 				if [ "$#" -ne '4' ]; then
 					case $5 in
 					'w')
-						#create widget
+						if [ "$#" -ne '6' ]; then
+							__error &&
+								return 1
+						else
+							echo "Create $6 widget in the $4 screen in the $2 feature ..."
+							__create_widget $2 $4 $6 &&
+								echo 'done'
+						fi
 						;;
 					*)
 						__error &&

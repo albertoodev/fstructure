@@ -17,7 +17,7 @@ function __create_structure() {
 	mkdir core features debug_log &&
 		mkdir core/{app,dependency_injection,errors,navigation,strings,theme} &&
 		touch core/{config,app/app,errors/{exceptions,failures},dependency_injection/injection,navigation/navigation,strings/strings,theme/{colors,theme}}.dart
-		touch debug_log/log.dart
+	touch debug_log/log.dart
 }
 function __put__() {
 	cat $1/$2.dart >core/$2.dart
@@ -53,6 +53,12 @@ function __create_repository() {
 	cd $r/lib/features/$1
 	touch domain/repositories/$2_repository.dart data/repositories/$2_data_repository.dart
 }
+
+# _create_data_source ..........................................
+function __create_data_source() {
+	cd $r/lib/features/$1
+	touch data/data_sources/$2_data_source.dart
+}
 # functions ................................................
 function __error() {
 	printf "something went wrong ... \n"
@@ -63,52 +69,62 @@ function __error() {
 function fstructure() {
 	case $1 in
 	'-i')
-		if [ "$#" -ne '1' ]; then 
+		if [ "$#" -ne '1' ]; then
 			__error &&
-			return 1
+				return 1
 		else
 			echo "Init..."
 			__init &&
-			echo 'done'
+				echo 'done'
 		fi
 		;;
 	'-f')
-		if [ "$#" -ne '2' ]; then 
+		if [ "$#" -ne '2' ]; then
 			__error &&
-			return 1
+				return 1
 		else
 			echo "New feature..."
 			__feature $2 &&
-			echo 'done'
+				echo 'done'
 		fi
 		;;
 	'-sf') # show features
-		if [ "$#" -ne '1' ]; then 
+		if [ "$#" -ne '1' ]; then
 			__error &&
-			return 1
-		else 
+				return 1
+		else
 			echo "$(ls $r/lib/features)"
-		fi		
+		fi
 		;;
 	'-m')
-		if [ "$#" -ne '3' ]; then 
+		if [ "$#" -ne '3' ]; then
 			__error &&
-			return 1
-		else 
+				return 1
+		else
 			echo "Create model..."
 			__create_model $2 $3 &&
-			echo 'done'
-		fi		
+				echo 'done'
+		fi
 		;;
 	'-r')
-		if [ "$#" -ne '3' ]; then 
+		if [ "$#" -ne '3' ]; then
 			__error &&
-			return 1
-		else 
+				return 1
+		else
 			echo "Create repository..."
 			__create_repository $2 $3 &&
-			echo 'done'
-		fi		
+				echo 'done'
+		fi
+		;;
+	'-d')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create Data Source ..."
+			__create_data_source $2 $3 &&
+				echo 'done'
+		fi
 		;;
 	*)
 		echo "Invalid input"

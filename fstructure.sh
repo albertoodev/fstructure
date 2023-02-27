@@ -15,8 +15,8 @@ function __init_files() {
 
 function __create_structure() {
 	mkdir core features debug_log &&
-		mkdir core/{app,dependency_injection,errors,navigation,strings,theme} &&
-		touch core/{config,app/app,errors/{exceptions,failures},dependency_injection/injection,navigation/navigation,strings/strings,theme/{colors,theme}}.dart
+		mkdir core/{app,errors,navigation,strings,theme} &&
+		touch core/{config,app/app,errors/{exceptions,failures},navigation/navigation,strings/strings,theme/{colors,theme}}.dart
 	touch debug_log/log.dart
 }
 function __put__() {
@@ -40,13 +40,13 @@ function __create_feature_structure() {
 	mkdir $1 &&
 		cd $1 &&
 		mkdir domain data presentation &&
-		mkdir data/{data_sources,models,repositories} domain/{entities,repositories,use_cases} presentation/{screens,widgets,providers} ||
+		mkdir data/{data_sources,models,repositories} domain/{entities,repositories} presentation/{screens,widgets,providers} ||
 		__error
 }
 # _create_model ................................................
 function __create_model() {
 	cd $r/lib/features/$1
-	touch {domain/entities/,data/models/}$2.dart
+	touch domain/entities/$2.dart data/models/$2_model.dart
 }
 # _create_repository ..........................................
 function __create_repository() {
@@ -59,6 +59,12 @@ function __create_data_source() {
 	cd $r/lib/features/$1
 	touch data/data_sources/$2_data_source.dart
 }
+
+# _create_provider ..........................................
+function __create_provider() {
+	cd $r/lib/features/$1
+	touch presentation/presentation/$2_provider.dart
+}
 # functions ................................................
 function __error() {
 	printf "something went wrong ... \n"
@@ -66,7 +72,7 @@ function __error() {
 }
 
 # project structure --------------------------#
-function fstructure() {
+function fs() {
 	case $1 in
 	'-i')
 		if [ "$#" -ne '1' ]; then
@@ -123,6 +129,16 @@ function fstructure() {
 		else
 			echo "Create Data Source ..."
 			__create_data_source $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-p')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create Data Source ..."
+			__create_provider $2 $3 &&
 				echo 'done'
 		fi
 		;;

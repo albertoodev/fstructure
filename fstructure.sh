@@ -77,8 +77,8 @@ function __create_screen() {
 	touch $2/$2.dart
 }
 
-# _create_feature_screen ..........................................
-function __create_feature_screen() {
+# _create_normal_screen ..........................................
+function __create_normal_screen() {
 	cd $r/lib/features/
 	mkdir $1 && mkdir $1/{widgets,providers}
 	touch $1/$1.dart
@@ -104,79 +104,71 @@ function fs() {
 		;;
 	'-f')
 		if [ "$#" -ne '2' ]; then
-			case $3 in
-			'ds')
-				if [ "$#" -ne '4' ]; then
-					__error &&
-						return 1
-				else
-					echo "Create $4 data source in the $2 feature ..."
-					__create_data_source $2 $4 &&
-						echo 'done'
-				fi
-				;;
-			'r')
-				if [ "$#" -ne '4' ]; then
-					__error &&
-						return 1
-				else
-					echo "Create $4 repository in the $2 feature ..."
-					__create_repository $2 $4 &&
-						echo 'done'
-				fi
-				;;
-			'm')
-				if [ "$#" -ne '4' ]; then
-					__error &&
-						return 1
-				else
-					echo "Create $4 model in the $2 feature ..."
-					__create_model $2 $4 &&
-						echo 'done'
-				fi
-				;;
-			'p')
-				if [ "$#" -ne '4' ]; then
-					__error &&
-						return 1
-				else
-					echo "Create $4 provider in the $2 feature ..."
-					__create_provider $2 $4 &&
-						echo 'done'
-				fi
-				;;
-			's')
-				if [ "$#" -ne '4' ]; then
-					case $5 in
-					'w')
-						if [ "$#" -ne '6' ]; then
-							__error &&
-								return 1
-						else
-							echo "Create $6 widget in the $4 screen in the $2 feature ..."
-							__create_widget $2 $4 $6 &&
-								echo 'done'
-						fi
-						;;
-					*)
-						__error &&
-							return 1
-						;;
-					esac
-				else
-					echo "Create $4 screen in the $2 feature ..."
-					__create_screen $2 $4 &&
-						echo 'done'
-				fi
-				;;
-			*)
-				__error &&
-					return 1
-				;;
-			esac
+			__error &&
+				return 1
 		else
 			echo "New feature..."
 			__feature $2 &&
+				echo 'done'
+		fi
+		;;
+	'-fd')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $3 data source in the $2 feature ..."
+			__create_data_source $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-fr')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $3 repository in the $2 feature ..."
+			__create_repository $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-fm')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $3 model in the $2 feature ..."
+			__create_model $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-fp')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $3 provider in the $2 feature ..."
+			__create_provider $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-fs')
+		if [ "$#" -ne '3' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $3 screen in the $2 feature ..."
+			__create_screen $2 $3 &&
+				echo 'done'
+		fi
+		;;
+	'-fsw')
+		if [ "$#" -ne '4' ]; then
+			__error &&
+				return 1
+		else
+			echo "Create $4 widget in the $3 screen in the $2 feature ..."
+			__create_widget $2 $3 $4 &&
 				echo 'done'
 		fi
 		;;
@@ -188,23 +180,13 @@ function fs() {
 			echo "$(ls $r/lib/features)"
 		fi
 		;;
-	'-fs')
+	'-ns')
 		if [ "$#" -ne '2' ]; then
-			case $3 in
-			'w')
-				#create widget
-				;;
-			'p')
-				#create provider
-				;;
-			*)
-				__error &&
-					return 1
-				;;
-			esac
+			__error &&
+				return 1
 		else
-			echo "Create Feature Screen ..."
-			__create_feature_screen $2 &&
+			echo "Create $2 Screen ..."
+			__create_normal_screen $2 &&
 				echo 'done'
 		fi
 		;;

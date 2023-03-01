@@ -65,8 +65,8 @@ function __create_feature_structure() {
 # _create_model ................................................
 function __create_model() {
 	cd $r/lib/src/features/$1
-	touch domain/entities/$2.dart data/models/$2_model.dart && 
-	echo "$(__change_content model/entity.dart $1 $2)" >domain/entities/$2.dart &&
+	touch domain/entities/$2.dart data/models/$2_model.dart &&
+		echo "$(__change_content model/entity.dart $1 $2)" >domain/entities/$2.dart &&
 		echo "$(__change_content model/model.dart $1 $2)" >data/models/$2_model.dart ||
 		__error
 }
@@ -90,31 +90,31 @@ function __create_data_source() {
 # _create_provider ..........................................
 function __create_provider() {
 	cd $r/lib/src/features/$1
-	touch presentation/providers/$2_provider.dart && 
-	echo "$(__change_content presentation/provider.dart $1 $2)" >presentation/providers/$2_provider.dart ||
+	touch presentation/providers/$2_provider.dart &&
+		echo "$(__change_content presentation/provider.dart $1 $2)" >presentation/providers/$2_provider.dart ||
 		__error
 }
 # _create_widget ..........................................
 function __create_widget() {
 	cd $r/lib/src/features/$1
-	touch presentation/screens/$2/widgets/$3_widget.dart  && 
-	echo "$(__change_content presentation/widget.dart _ $3)" >presentation/screens/$2/widgets/$3_widget.dart ||
+	touch presentation/screens/$2/widgets/$3_widget.dart &&
+		echo "$(__change_content presentation/widget.dart _ $3)" >presentation/screens/$2/widgets/$3_widget.dart ||
 		__error
 }
 
 # _create_general_widget ..........................................
 function __create_general_widget() {
 	cd $r/lib/src/general
-	touch widgets/$1_widget.dart && 
-	echo "$(__change_content presentation/widget.dart _ $1)" >widgets/$1_widget.dart ||
+	touch widgets/$1_widget.dart &&
+		echo "$(__change_content presentation/widget.dart _ $1)" >widgets/$1_widget.dart ||
 		__error
 }
 # _create_screen ..........................................
 function __create_screen() {
 	cd $r/lib/src/features/$1/presentation/screens/
 	mkdir $2 && mkdir $2/widgets
-	touch $2/$2.dart  && 
-	echo "$(__change_content presentation/screen.dart $1 $2)" >$2/$2.dart ||
+	touch $2/$2.dart &&
+		echo "$(__change_content presentation/screen.dart $1 $2)" >$2/$2.dart ||
 		__error
 }
 
@@ -122,8 +122,8 @@ function __create_screen() {
 function __create_normal_screen() {
 	cd $r/lib/src/general/screens
 	mkdir $1 && mkdir $1/widgets
-	touch $1/$1.dart  && 
-	echo "$(__change_content presentation/screen.dart _ $1)" >$1/$1.dart ||
+	touch $1/$1.dart &&
+		echo "$(__change_content presentation/screen.dart _ $1)" >$1/$1.dart ||
 		__error
 }
 
@@ -243,4 +243,57 @@ function fs() {
 		;;
 	esac
 	cd "$r" || __error
+}
+
+function fsm() {
+	op=''
+	if [ "$#" -gt 3 ] && [ "$1" = "-f" ]; then
+		if [ -d "lib/src/features/$2" ]; then
+			i=3
+			while [ "$i" -le "$#" ]; do
+				opt=$(eval "echo \"\${$i}\"")
+				case $opt in
+				-*)
+					op="$opt"
+					;;
+				*)
+					if [ "$op" != "" ] && [ "$opt" != "" ]; then
+						case $op in
+						'-ds')
+							echo "Create $opt data source in the $2 feature ..."
+							__create_data_source $2 $opt &&
+								echo 'done'
+							;;
+						'-r')
+							echo "Create $opt repository in the $2 feature ..."
+							__create_repository $2 $opt &&
+								echo 'done'
+							;;
+						'-m')
+							echo "Create $opt model in the $2 feature ..."
+							__create_model $2 $opt &&
+								echo 'done'
+							;;
+						'-p')
+							echo "Create $opt provider in the $2 feature ..."
+							__create_provider $2 $opt &&
+								echo 'done'
+							;;
+						'-s')
+							echo "Create $opt screen in the $2 feature ..."
+							__create_screen $2 $opt &&
+								echo 'done'
+							;;
+						esac
+					fi
+					;;
+				esac
+				i=$((i + 1))
+			done
+		else
+			echo "$2 feature not exists"
+		fi
+	else
+		echo "syntax error"
+	fi
 }

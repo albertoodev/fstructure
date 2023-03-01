@@ -13,11 +13,12 @@ function __error() {
 function __to_class_name() {
 	echo "$1" | sed -e 's/_\([a-z]\)/\U\1/g' -e 's/^./\U&/'
 }
-## file name
+## file feature name
 function __change_content() {
 	text=$(cat $FILES_PATH/$1)
-	text="${text//Example/$(__to_class_name $2)}"
-	text="${text//example/$2}"
+	text="${text//featuree/$2}"
+	text="${text//Example/$(__to_class_name $3)}"
+	text="${text//example/$3}"
 	echo "$text"
 }
 
@@ -64,14 +65,17 @@ function __create_feature_structure() {
 # _create_model ................................................
 function __create_model() {
 	cd $r/lib/src/features/$1
-	touch domain/entities/$2.dart data/models/$2_model.dart
+	touch domain/entities/$2.dart data/models/$2_model.dart && 
+	echo "$(__change_content model/entity.dart $1 $2)" >domain/entities/$2.dart &&
+		echo "$(__change_content model/model.dart $1 $2)" >data/models/$2_model.dart ||
+		__error
 }
 # _create_repository ..........................................
 function __create_repository() {
 	cd $r/lib/src/features/$1
 	touch domain/repositories/$2_repository.dart data/repositories/$2_data_repository.dart &&
-		echo "$(__change_content repositories/repository.dart $2)" >domain/repositories/$2_repository.dart &&
-		echo "$(__change_content repositories/data_repository.dart $2)" >data/repositories/$2_data_repository.dart ||
+		echo "$(__change_content repositories/repository.dart $1 $2)" >domain/repositories/$2_repository.dart &&
+		echo "$(__change_content repositories/data_repository.dart $1 $2)" >data/repositories/$2_data_repository.dart ||
 		__error
 
 }
@@ -79,7 +83,9 @@ function __create_repository() {
 # _create_data_source ..........................................
 function __create_data_source() {
 	cd $r/lib/src/features/$1
-	touch data/data_sources/$2_data_source.dart
+	touch data/data_sources/$2_data_source.dart &&
+		echo "$(__change_content data_source/data_source.dart $1 $2)" >data/data_sources/$2_data_source.dart ||
+		__error
 }
 
 # _create_provider ..........................................

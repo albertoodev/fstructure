@@ -238,8 +238,11 @@ function fs() {
 				echo 'done'
 		fi
 		;;
+	'--help')
+		__help
+		;;
 	*)
-		echo "Invalid input"
+		echo ""
 		;;
 	esac
 	cd "$r" || __error
@@ -247,53 +250,108 @@ function fs() {
 
 function fsm() {
 	op=''
-	if [ "$#" -gt 3 ] && [ "$1" = "-f" ]; then
-		if [ -d "lib/src/features/$2" ]; then
-			i=3
-			while [ "$i" -le "$#" ]; do
-				opt=$(eval "echo \"\${$i}\"")
-				case $opt in
-				-*)
-					op="$opt"
-					;;
-				*)
-					if [ "$op" != "" ] && [ "$opt" != "" ]; then
-						case $op in
-						'-ds')
-							echo "Create $opt data source in the $2 feature ..."
-							__create_data_source $2 $opt &&
-								echo 'done'
-							;;
-						'-r')
-							echo "Create $opt repository in the $2 feature ..."
-							__create_repository $2 $opt &&
-								echo 'done'
-							;;
-						'-m')
-							echo "Create $opt model in the $2 feature ..."
-							__create_model $2 $opt &&
-								echo 'done'
-							;;
-						'-p')
-							echo "Create $opt provider in the $2 feature ..."
-							__create_provider $2 $opt &&
-								echo 'done'
-							;;
-						'-s')
-							echo "Create $opt screen in the $2 feature ..."
-							__create_screen $2 $opt &&
-								echo 'done'
-							;;
-						esac
-					fi
-					;;
-				esac
-				i=$((i + 1))
-			done
+	case $1 in
+	'-f')
+		if [ "$#" -gt 3 ]; then
+			if [ -d "lib/src/features/$2" ]; then
+				i=3
+				while [ "$i" -le "$#" ]; do
+					opt=$(eval "echo \"\${$i}\"")
+					case $opt in
+					-*)
+						op="$opt"
+						;;
+					*)
+						if [ "$op" != "" ] && [ "$opt" != "" ]; then
+							case $op in
+							'-ds')
+								echo "Create $opt data source in the $2 feature ..."
+								__create_data_source $2 $opt &&
+									echo 'done'
+								;;
+							'-r')
+								echo "Create $opt repository in the $2 feature ..."
+								__create_repository $2 $opt &&
+									echo 'done'
+								;;
+							'-m')
+								echo "Create $opt model in the $2 feature ..."
+								__create_model $2 $opt &&
+									echo 'done'
+								;;
+							'-p')
+								echo "Create $opt provider in the $2 feature ..."
+								__create_provider $2 $opt &&
+									echo 'done'
+								;;
+							'-s')
+								echo "Create $opt screen in the $2 feature ..."
+								__create_screen $2 $opt &&
+									echo 'done'
+								;;
+							esac
+						fi
+						;;
+					esac
+					i=$((i + 1))
+				done
+			else
+				echo "$2 feature not exists"
+			fi
 		else
-			echo "$2 feature not exists"
+			echo ""
 		fi
-	else
-		echo "syntax error"
-	fi
+		;;
+	'--help')
+		__help_fsm
+		;;
+	*)
+		echo "ERROR: Invalid command or incorrect number of arguments. Please try again or use the --help command for more information."
+		;;
+	esac
+}
+
+function __help() {
+	echo "Usage: fs [command] [arguments]"
+	echo ""
+	echo "Commands:"
+	echo "  -i              Initialize the project"
+	echo "  -f [feature]    Create a new feature"
+	echo "  -fd [feature] [data-source] Create a new data source in a feature"
+	echo "  -fr [feature] [repository] Create a new repository in a feature"
+	echo "  -fm [feature] [model] Create a new model in a feature"
+	echo "  -fp [feature] [provider] Create a new provider in a feature"
+	echo "  -fs [feature] [screen] Create a new screen in a feature"
+	echo "  -fsw [feature] [screen] [widget] Create a new widget in a screen of a feature"
+	echo "  -sf             Show available features"
+	echo "  -gw [widget]    Create a new general widget"
+	echo "  -ns [screen]    Create a new normal screen"
+	echo ""
+	echo "Examples:"
+	echo "  fs -i                     # Initializes the project"
+	echo "  fs -f authentication      # Creates a new feature named 'authentication'"
+	echo "  fs -fd authentication api # Creates a new data source named 'api' in the 'authentication' feature"
+	echo "  fs -sf                    # Lists all available features"
+	echo "  fs -gw button             # Creates a new general widget named 'button'"
+}
+
+function __help_fsm() {
+	echo "Usage: fsm -f FEATURE COMMANDS [OPTIONS]"
+	echo ""
+	echo "A script to automate the creation of common files and directories in a Flutter project."
+	echo ""
+	echo "Commands:"
+	echo "  -ds NAMES    create a new data sources with the specified NAMES in the given FEATURE"
+	echo "  -r NAMES     create a new repositories with the specified NAMES in the given FEATURE"
+	echo "  -m NAMES    create a new models with the specified NAME in the given FEATURE"
+	echo "  -p NAMES     create a new providers with the specified NAMES in the given FEATURE"
+	echo "  -s NAMES     create a new screens with the specified NAMES in the given FEATURE"
+	echo ""
+	echo "Options:"
+	echo "  -f FEATURE  specify the FEATURE to create the files/directories in"
+	echo ""
+	echo "Examples:"
+	echo "  fsm -f auth -ds users login -m user      create a new data sources called 'users' and 'login' and new model called 'user' in the 'auth' feature"
+	echo "  fsm -f home -r products      create a new repository called 'products' in the 'home' feature"
+	echo "  fsm -f profile -m user       create a new model called 'user' in the 'profile' feature"
 }

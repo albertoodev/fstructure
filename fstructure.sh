@@ -4,6 +4,23 @@
 r=$(pwd)
 FILES_PATH=$(find ~ -name fstructure)/files
 
+# functions ................................................
+function __error() {
+	printf "something went wrong ... \n"
+	return 1
+}
+
+function __to_class_name() {
+	echo "$1" | sed -e 's/_\([a-z]\)/\U\1/g' -e 's/^./\U&/'
+}
+## file name
+function __change_content() {
+	text=$(cat $FILES_PATH/$1)
+	text="${text//Example/$(__to_class_name $2)}"
+	text="${text//example/$2}"
+	echo "$text"
+}
+
 # _init ................................................
 function __init() {
 	cd $r/lib && __init_files || __error
@@ -52,7 +69,11 @@ function __create_model() {
 # _create_repository ..........................................
 function __create_repository() {
 	cd $r/lib/src/features/$1
-	touch domain/repositories/$2_repository.dart data/repositories/$2_data_repository.dart
+	touch domain/repositories/$2_repository.dart data/repositories/$2_data_repository.dart &&
+		echo "$(__change_content repositories/repository.dart $2)" >domain/repositories/$2_repository.dart &&
+		echo "$(__change_content repositories/data_repository.dart $2)" >data/repositories/$2_data_repository.dart ||
+		__error
+
 }
 
 # _create_data_source ..........................................
@@ -89,11 +110,6 @@ function __create_normal_screen() {
 	cd $r/lib/src/general/screens
 	mkdir $1 && mkdir $1/{widgets,providers}
 	touch $1/$1.dart
-}
-# functions ................................................
-function __error() {
-	printf "something went wrong ... \n"
-	return 1
 }
 
 # project structure --------------------------#

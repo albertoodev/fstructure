@@ -1,0 +1,1 @@
+class ExampleException extends Exception {}

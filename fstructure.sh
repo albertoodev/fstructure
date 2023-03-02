@@ -127,6 +127,14 @@ function __create_normal_screen() {
 		__error
 }
 
+# _create_error .................................................
+
+function __create_error(){
+	cd "$r/lib/core/errors" &&
+	echo "\n$(__change_content errors/new_error.dart _ $1)\n" >>exceptions.dart &&
+	echo "\n$(__change_content errors/new_failure.dart _ $1)\n" >>failures.dart ||
+		echo "something went wrong ..."
+}
 # project structure --------------------------#
 function fs() {
 	case $1 in
@@ -311,6 +319,22 @@ function fsm() {
 	esac
 }
 
+function fsge() {
+	if [ "$#" -gt 0 ]; then
+			if [ -d "lib/core/errors" ]; then
+				i=1
+				while [ "$i" -le "$#" ]; do
+					value=$(eval "echo \"\${$i}\"")
+					__create_error $value
+					i=$((i+1))
+				done
+			else
+				echo "You need init the project first"
+			fi
+		else
+			echo "ERROR: Invalid command or incorrect number of arguments."
+		fi
+}
 function __help() {
 	echo "Usage: fs [command] [arguments]"
 	echo ""

@@ -355,6 +355,7 @@ function __help() {
 	echo "  -sf             Show available features"
 	echo "  -gw [widget]    Create a new general widget"
 	echo "  -ns [screen]    Create a new normal screen"
+	echo "  -cf [failures]    Create a new failures in the failures and exceptins files"
 	echo ""
 	echo "Examples:"
 	echo "  fs -i                     # Initializes the project"

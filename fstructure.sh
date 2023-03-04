@@ -283,7 +283,7 @@ function fsm() {
 	'-f')
 		if [ "$#" -gt 3 ]; then
 			if [ -d "lib/src/features/$2" ]; then
-				i=3
+				local i=3
 				while [ "$i" -le "$#" ]; do
 					opt=$(eval "echo \"\${$i}\"")
 					case $opt in
@@ -329,6 +329,26 @@ function fsm() {
 			fi
 		else
 			echo ""
+		fi
+		;;
+	'-fs')
+		if [ "$#" -gt 4 ]; then
+			if [ -d "lib/src/features/$2" ]; then
+				if [ -d "lib/src/features/$2/presentation/screens/$3" ]; then
+					local i=4
+					while [ "$i" -le "$#" ]; do
+						widget=$(eval "echo \"\${$i}\"")
+						__create_widget $2 $3 $widget
+						i=$((i + 1))
+					done
+				else
+					echo "$3 screen not exists in the $2 feature \n to create a new screen you can use the 'fs -fs' command"
+				fi
+			else
+				echo "$2 feature not exists \n to create a new feature you can use the 'fs -f' command"
+			fi
+		else
+			echo "ERROR: Invalid command or incorrect number of arguments. Please try again or use the --help command for more information."
 		fi
 		;;
 	'--help')

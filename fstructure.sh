@@ -358,6 +358,7 @@ function fsm() {
 		echo "ERROR: Invalid command or incorrect number of arguments. Please try again or use the --help command for more information."
 		;;
 	esac
+	cd "$r" || __error
 }
 
 function __help() {

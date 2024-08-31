@@ -2,8 +2,7 @@
 #--------------------------#
 ## main ##
 r=$(pwd)
-FILES_PATH=$(find ~ -name fstructure)/files
-
+FILES_PATH="~/shell/fstructure/files"
 # functions ................................................
 function __error() {
 	printf "something went wrong ... \n"
@@ -32,9 +31,9 @@ function __init_files() {
 }
 
 function __create_structure() {
-	mkdir core src debug_log &&
-		mkdir core/{app,errors,navigation,strings,theme} src/{features,general} &&
-		mkdir src/general/{widgets,screens,providers} &&
+	mkdir core features debug_log &&
+		mkdir core/{app,errors,navigation,strings,theme} features &&
+		mkdir features/shared/{widgets,screens,providers} &&
 		touch core/{config,app/app,errors/{exceptions,failures},navigation/navigation,strings/strings,theme/{colors,theme}}.dart
 	touch debug_log/log.dart
 }
@@ -52,7 +51,7 @@ function __put_content() {
 # _feature ................................................
 
 function __feature() {
-	cd $r/lib/src/features && __create_feature_structure $1 || __error
+	cd $r/lib/features && __create_feature_structure $1 || __error
 }
 
 function __create_feature_structure() {
@@ -64,7 +63,7 @@ function __create_feature_structure() {
 }
 # _create_model ................................................
 function __create_model() {
-	cd $r/lib/src/features/$1
+	cd $r/lib/features/$1
 	touch domain/entities/$2.dart data/models/$2_model.dart &&
 		echo "$(__change_content model/entity.dart $1 $2)" >domain/entities/$2.dart &&
 		echo "$(__change_content model/model.dart $1 $2)" >data/models/$2_model.dart ||
@@ -72,7 +71,7 @@ function __create_model() {
 }
 # _create_repository ..........................................
 function __create_repository() {
-	cd $r/lib/src/features/$1
+	cd $r/lib/features/$1
 	touch domain/repositories/$2_repository.dart data/repositories/$2_data_repository.dart &&
 		echo "$(__change_content repositories/repository.dart $1 $2)" >domain/repositories/$2_repository.dart &&
 		echo "$(__change_content repositories/data_repository.dart $1 $2)" >data/repositories/$2_data_repository.dart ||
@@ -81,7 +80,7 @@ function __create_repository() {
 
 # _create_data_source ..........................................
 function __create_data_source() {
-	cd $r/lib/src/features/$1
+	cd $r/lib/features/$1
 	touch data/data_sources/$2_data_source.dart &&
 		echo "$(__change_content data_source/data_source.dart $1 $2)" >data/data_sources/$2_data_source.dart ||
 		__error
@@ -89,29 +88,29 @@ function __create_data_source() {
 
 # _create_provider ..........................................
 function __create_provider() {
-	cd $r/lib/src/features/$1
+	cd $r/lib/features/$1
 	touch presentation/providers/$2_provider.dart &&
 		echo "$(__change_content presentation/provider.dart $1 $2)" >presentation/providers/$2_provider.dart ||
 		__error
 }
 # _create_widget ..........................................
 function __create_widget() {
-	cd $r/lib/src/features/$1
+	cd $r/lib/features/$1
 	touch presentation/screens/$2/widgets/$3_widget.dart &&
 		echo "$(__change_content presentation/widget.dart _ $3)" >presentation/screens/$2/widgets/$3_widget.dart ||
 		__error
 }
 
-# _create_general_widget ..........................................
-function __create_general_widget() {
-	cd $r/lib/src/general
+# _create_shared_widget ..........................................
+function __create_shared_widget() {
+	cd $r/lib/features/shared
 	touch widgets/$1_widget.dart &&
 		echo "$(__change_content presentation/widget.dart _ $1)" >widgets/$1_widget.dart ||
 		__error
 }
 # _create_screen ..........................................
 function __create_screen() {
-	cd $r/lib/src/features/$1/presentation/screens/
+	cd $r/lib/features/$1/presentation/screens/
 	mkdir $2 && mkdir $2/widgets
 	touch $2/$2.dart &&
 		echo "$(__change_content presentation/screen.dart $1 $2)" >$2/$2.dart ||
@@ -120,7 +119,7 @@ function __create_screen() {
 
 # _create_normal_screen ..........................................
 function __create_normal_screen() {
-	cd $r/lib/src/general/screens
+	cd $r/lib/features/shared/screens
 	mkdir $1 && mkdir $1/widgets
 	touch $1/$1.dart &&
 		echo "$(__change_content presentation/screen.dart _ $1)" >$1/$1.dart ||
@@ -249,8 +248,8 @@ function fs() {
 			__error &&
 				return 1
 		else
-			echo "Create $2 general widget..."
-			__create_general_widget $2 &&
+			echo "Create $2 shared widget..."
+			__create_shared_widget $2 &&
 				echo 'done'
 		fi
 		;;
@@ -282,7 +281,7 @@ function fsm() {
 	case $1 in
 	'-f')
 		if [ "$#" -gt 3 ]; then
-			if [ -d "lib/src/features/$2" ]; then
+			if [ -d "lib/features/$2" ]; then
 				local i=3
 				while [ "$i" -le "$#" ]; do
 					opt=$(eval "echo \"\${$i}\"")
@@ -333,8 +332,8 @@ function fsm() {
 		;;
 	'-fs')
 		if [ "$#" -gt 4 ]; then
-			if [ -d "lib/src/features/$2" ]; then
-				if [ -d "lib/src/features/$2/presentation/screens/$3" ]; then
+			if [ -d "lib/features/$2" ]; then
+				if [ -d "lib/features/$2/presentation/screens/$3" ]; then
 					local i=4
 					while [ "$i" -le "$#" ]; do
 						widget=$(eval "echo \"\${$i}\"")
@@ -374,7 +373,7 @@ function __help() {
 	echo "  -fs [feature] [screen] Create a new screen in a feature"
 	echo "  -fsw [feature] [screen] [widget] Create a new widget in a screen of a feature"
 	echo "  -sf             Show available features"
-	echo "  -gw [widget]    Create a new general widget"
+	echo "  -gw [widget]    Create a new shared widget"
 	echo "  -ns [screen]    Create a new normal screen"
 	echo "  -cf [failures]    Create a new failures in the failures and exceptins files"
 	echo ""
@@ -383,7 +382,7 @@ function __help() {
 	echo "  fs -f authentication      # Creates a new feature named 'authentication'"
 	echo "  fs -fd authentication api # Creates a new data source named 'api' in the 'authentication' feature"
 	echo "  fs -sf                    # Lists all available features"
-	echo "  fs -gw button             # Creates a new general widget named 'button'"
+	echo "  fs -gw button             # Creates a new shared widget named 'button'"
 }
 
 function __help_fsm() {

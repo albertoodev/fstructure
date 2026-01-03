@@ -1,7 +1,7 @@
-name: fstructure_cli
-description: A sample command-line application.
+name: fstructure
+description: A CLI tool to generate Flutter project structure (clean architecture) with state management options 
+repository: https://github.com/albertoodev/fstructure
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.10.4
@@ -9,7 +9,11 @@ environment:
 # Add regular dependencies here.
 dependencies:
   path: ^1.9.0
+  args: ^2.7.0
 
 dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
+
+executables:
+  fs : bin/fs.dart
